@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCustomers, createCustomer } from "@/lib/actions/customers";
-import { Card, CardHeader, CardContent, Input } from "@/components/ui/primitives";
+import { Card, CardContent, Input } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 
 export default async function CustomersPage() {

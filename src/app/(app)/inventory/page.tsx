@@ -32,8 +32,8 @@ export default async function InventoryPage() {
               </tr>
             </thead>
             <tbody>
-              {stock.map((s: any) => {
-                const ing = s.ingredients;
+              {stock.map((s) => {
+                const ing = s.ingredients as { name?: string; unit?: string; reorder_level?: number; cost_per_unit?: number } | null;
                 const low = s.quantity_on_hand <= (ing?.reorder_level ?? 0);
                 return (
                   <tr key={s.id} className="border-b border-border/50">

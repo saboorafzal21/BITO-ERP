@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getEmployeesData, createEmployee } from "@/lib/actions/employees";
-import { Card, CardHeader, CardContent, Input } from "@/components/ui/primitives";
+import { Card, CardContent, Input } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 
 export default async function EmployeesPage() {
@@ -13,7 +13,7 @@ export default async function EmployeesPage() {
   const branchId = profile.branch_id;
 
   const { employees, users } = await getEmployeesData(branchId);
-  const nonEmployeeUsers = users.filter((u) => !employees.some((e: any) => e.users?.email === u.email));
+  const nonEmployeeUsers = users.filter((u) => !employees.some((e) => (e.users as { email?: string } | null)?.email === u.email));
 
   return (
     <div className="space-y-6">
@@ -31,15 +31,18 @@ export default async function EmployeesPage() {
               </tr>
             </thead>
             <tbody>
-              {employees.map((e: any) => (
-                <tr key={e.id} className="border-b border-border/50">
-                  <td className="py-2">{e.users?.full_name}</td>
-                  <td className="py-2 capitalize">{e.users?.role}</td>
-                  <td className="py-2">{e.designation ?? "—"}</td>
-                  <td className="py-2">{e.salary ? `Rs ${e.salary}` : "—"}</td>
-                  <td className="py-2">{e.employee_code}</td>
-                </tr>
-              ))}
+              {employees.map((e) => {
+                const u = e.users as { full_name?: string; role?: string } | null;
+                return (
+                  <tr key={e.id} className="border-b border-border/50">
+                    <td className="py-2">{u?.full_name}</td>
+                    <td className="py-2 capitalize">{u?.role}</td>
+                    <td className="py-2">{e.designation ?? "—"}</td>
+                    <td className="py-2">{e.salary ? `Rs ${e.salary}` : "—"}</td>
+                    <td className="py-2">{e.employee_code}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 

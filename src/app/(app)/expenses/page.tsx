@@ -32,14 +32,17 @@ export default async function ExpensesPage() {
               </tr>
             </thead>
             <tbody>
-              {expenses.map((e: any) => (
-                <tr key={e.id} className="border-b border-border/50">
-                  <td className="py-2">{e.expense_date}</td>
-                  <td className="py-2">{e.expense_categories?.name}</td>
-                  <td className="py-2">{e.description ?? "—"}</td>
-                  <td className="py-2">Rs {e.amount}</td>
-                </tr>
-              ))}
+              {expenses.map((e) => {
+                const cat = e.expense_categories as { name?: string } | null;
+                return (
+                  <tr key={e.id} className="border-b border-border/50">
+                    <td className="py-2">{e.expense_date}</td>
+                    <td className="py-2">{cat?.name}</td>
+                    <td className="py-2">{e.description ?? "—"}</td>
+                    <td className="py-2">Rs {e.amount}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 

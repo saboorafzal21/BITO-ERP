@@ -33,7 +33,7 @@ export default async function PurchasingPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((o: any) => (
+              {orders.map((o) => (
                 <tr key={o.id} className="border-b border-border/50">
                   <td className="py-2">{o.po_number}</td>
                   <td className="py-2">{o.suppliers?.name}</td>

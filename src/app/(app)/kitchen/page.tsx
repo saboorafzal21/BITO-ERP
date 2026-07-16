@@ -25,7 +25,7 @@ export default async function KitchenPage() {
       <h1 className="text-xl font-bold">Kitchen Display</h1>
       {orders.length === 0 && <p className="text-sm text-muted">No active orders.</p>}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {orders.map((order: any) => {
+        {orders.map((order) => {
           const next = NEXT_STATUS[order.status];
           return (
             <Card key={order.id}>
@@ -42,7 +42,7 @@ export default async function KitchenPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <ul className="space-y-1 text-sm">
-                  {order.sale_items?.map((item: any) => (
+                  {order.sale_items?.map((item) => (
                     <li key={item.id}>
                       {item.quantity}x {item.product_name}
                       {item.notes ? <span className="text-muted"> — {item.notes}</span> : null}

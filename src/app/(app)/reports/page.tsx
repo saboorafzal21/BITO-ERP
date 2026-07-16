@@ -18,7 +18,7 @@ export default async function ReportsPage() {
     .eq("branch_id", profile.branch_id);
 
   const expenseTotals: Record<string, number> = {};
-  (expensesByCategory ?? []).forEach((e: any) => {
+  (expensesByCategory ?? []).forEach((e) => {
     const name = e.expense_categories?.name ?? "Other";
     expenseTotals[name] = (expenseTotals[name] ?? 0) + Number(e.amount);
   });
