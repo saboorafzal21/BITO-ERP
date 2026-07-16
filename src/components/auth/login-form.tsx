@@ -90,6 +90,13 @@ export function LoginForm() {
         {isPending && <Loader2 size={16} className="animate-spin" />}
         Sign in
       </Button>
+
+      <p className="text-center text-sm text-muted">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="text-primary hover:underline">
+          Create one
+        </Link>
+      </p>
     </form>
   );
 }

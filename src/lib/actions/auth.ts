@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { loginSchema, forgotPasswordSchema, resetPasswordSchema } from "@/lib/validations/auth";
+import { loginSchema, signupSchema, forgotPasswordSchema, resetPasswordSchema } from "@/lib/validations/auth";
 import { redirect } from "next/navigation";
 
 export interface ActionResult {
@@ -58,6 +58,42 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
   return { success: true };
 }
 
+export async function signupAction(formData: FormData): Promise<ActionResult> {
+  const parsed = signupSchema.safeParse({
+    fullName: formData.get("fullName"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
+
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signUp({
+    email: parsed.data.email,
+    password: parsed.data.password,
+    options: {
+      data: { full_name: parsed.data.fullName },
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
+    },
+  });
+
+  if (error) {
+    if (error.message.toLowerCase().includes("already registered")) {
+      return { success: false, error: "An account with this email already exists." };
+    }
+    return { success: false, error: error.message };
+  }
+
+  if (!data.user) {
+    return { success: false, error: "Could not create account. Please try again." };
+  }
+
+  return { success: true };
+}
+
 export async function logoutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -75,7 +111,6 @@ export async function forgotPasswordAction(formData: FormData): Promise<ActionRe
     redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password`,
   });
 
-  // Always return success to avoid leaking which emails exist.
   if (error) {
     console.error("resetPasswordForEmail error:", error.message);
   }
