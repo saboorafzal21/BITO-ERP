@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F8F9FA;
+  --foreground: #1A1A1A;
+
+  --color-primary: #E31E24;
+  --color-primary-hover: #C91A1F;
+  --color-primary-foreground: #FFFFFF;
+
+  --color-accent: #FFC72C;
+  --color-accent-foreground: #1A1A1A;
+
+  --color-success: #28A745;
+  --color-danger: #DC3545;
+  --color-warning: #FFC107;
+
+  --color-card: #FFFFFF;
+  --color-border: #E9ECEF;
+  --color-muted: #6C757D;
+  --color-muted-bg: #F1F3F5;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: #121212;
+  --foreground: #F1F3F5;
+  --color-card: #1A1A1A;
+  --color-border: #2A2A2A;
+  --color-muted: #A0A0A0;
+  --color-muted-bg: #1F1F1F;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
+  --color-card: var(--color-card);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
+  --color-muted-bg: var(--color-muted-bg);
+  --radius-card: var(--radius);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+
+.card-shadow {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
