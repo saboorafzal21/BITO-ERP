@@ -33,21 +33,24 @@ export default async function PurchasingPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((o) => (
-                <tr key={o.id} className="border-b border-border/50">
-                  <td className="py-2">{o.po_number}</td>
-                  <td className="py-2">{o.suppliers?.name}</td>
-                  <td className="py-2">Rs {o.total_amount}</td>
-                  <td className="py-2"><Badge variant={o.status === "received" ? "success" : "warning"}>{o.status}</Badge></td>
-                  <td className="py-2 text-right">
-                    {o.status !== "received" && (
-                      <form action={async () => { "use server"; await receivePO(o.id, userId); }}>
-                        <Button size="sm" variant="outline">Receive</Button>
-                      </form>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {orders.map((o) => {
+                const supplier = o.suppliers as unknown as { name?: string } | null;
+                return (
+                  <tr key={o.id} className="border-b border-border/50">
+                    <td className="py-2">{o.po_number}</td>
+                    <td className="py-2">{supplier?.name}</td>
+                    <td className="py-2">Rs {o.total_amount}</td>
+                    <td className="py-2"><Badge variant={o.status === "received" ? "success" : "warning"}>{o.status}</Badge></td>
+                    <td className="py-2 text-right">
+                      {o.status !== "received" && (
+                        <form action={async () => { "use server"; await receivePO(o.id, userId); }}>
+                          <Button size="sm" variant="outline">Receive</Button>
+                        </form>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 

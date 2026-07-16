@@ -19,7 +19,8 @@ export default async function ReportsPage() {
 
   const expenseTotals: Record<string, number> = {};
   (expensesByCategory ?? []).forEach((e) => {
-    const name = e.expense_categories?.name ?? "Other";
+    const cat = e.expense_categories as unknown as { name?: string } | null;
+    const name = cat?.name ?? "Other";
     expenseTotals[name] = (expenseTotals[name] ?? 0) + Number(e.amount);
   });
 
