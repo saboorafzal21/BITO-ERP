@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/primitives";
-import { signupAction } from "@/lib/actions/auth";
+import { resetPasswordAction } from "@/lib/actions/auth";
 import { Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
 
-export function SignupForm() {
+export function ResetPasswordForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,33 +18,27 @@ export function SignupForm() {
     setError(null);
     startTransition(async () => {
       try {
-        const result = await signupAction(formData);
+        const result = await resetPasswordAction(formData);
         if (!result.success) {
-          setError(result.error || "Something went wrong. Please try again.");
+          setError(result.error || "Could not reset password. Please try again.");
           return;
         }
         setDone(true);
+        setTimeout(() => {
+          router.replace("/login");
+        }, 2000);
       } catch (err) {
-        console.error("Signup submit error:", err);
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        console.error("Reset password error:", err);
+        setError(err instanceof Error ? err.message : "Could not reset password. Please try again.");
       }
     });
   }
 
   if (done) {
     return (
-      <div className="mt-6 space-y-4 rounded-[var(--radius-card)] border border-success/30 bg-success/10 p-4">
-        <div className="flex items-center gap-2 text-success">
-          <CheckCircle2 size={20} />
-          <p className="font-medium">Account created</p>
-        </div>
-        <p className="text-sm text-muted">
-          Check your email to confirm your account, then sign in. An owner or admin will
-          need to assign you a branch and role before you can access the dashboard.
-        </p>
-        <Button className="w-full" onClick={() => router.push("/login")}>
-          Go to sign in
-        </Button>
+      <div className="mt-6 flex items-start gap-3 rounded-[var(--radius-card)] border border-success/30 bg-success/10 p-4 text-sm text-success">
+        <CheckCircle2 size={20} className="mt-0.5 shrink-0" />
+        <div>Password updated. Redirecting you to sign in…</div>
       </div>
     );
   }
@@ -59,22 +52,8 @@ export function SignupForm() {
       )}
 
       <div className="space-y-1.5">
-        <label htmlFor="fullName" className="text-sm font-medium text-foreground">
-          Full name
-        </label>
-        <Input id="fullName" name="fullName" type="text" autoComplete="name" placeholder="Your name" required />
-      </div>
-
-      <div className="space-y-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-foreground">
-          Email
-        </label>
-        <Input id="email" name="email" type="email" autoComplete="email" placeholder="you@bito.pk" required />
-      </div>
-
-      <div className="space-y-1.5">
         <label htmlFor="password" className="text-sm font-medium text-foreground">
-          Password
+          New password
         </label>
         <div className="relative">
           <Input
@@ -99,7 +78,7 @@ export function SignupForm() {
 
       <div className="space-y-1.5">
         <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
-          Confirm password
+          Confirm new password
         </label>
         <Input
           id="confirmPassword"
@@ -113,15 +92,8 @@ export function SignupForm() {
 
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending && <Loader2 size={16} className="animate-spin" />}
-        Create account
+        Update password
       </Button>
-
-      <p className="text-center text-sm text-muted">
-        Already have an account?{" "}
-        <Link href="/login" className="text-primary hover:underline">
-          Sign in
-        </Link>
-      </p>
     </form>
   );
 }

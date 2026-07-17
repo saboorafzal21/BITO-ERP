@@ -4,6 +4,12 @@ import { NextResponse, type NextRequest } from "next/server";
 // Routes that don't require an authenticated session.
 const PUBLIC_ROUTES = ["/login", "/signup", "/forgot-password", "/reset-password"];
 
+// Routes that should stay reachable even if a session already exists.
+// /reset-password is reached via a Supabase recovery link, which establishes
+// a temporary session before the user has actually set a new password — so
+// we must not bounce them away to /dashboard in that case.
+const ALLOW_WHEN_AUTHENTICATED = ["/reset-password"];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -32,6 +38,7 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isPublicRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));
+  const isAllowedWhenAuthenticated = ALLOW_WHEN_AUTHENTICATED.some((route) => path.startsWith(route));
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
@@ -40,7 +47,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isPublicRoute) {
+  if (user && isPublicRoute && !isAllowedWhenAuthenticated) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

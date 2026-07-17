@@ -59,39 +59,46 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
 }
 
 export async function signupAction(formData: FormData): Promise<ActionResult> {
-  const parsed = signupSchema.safeParse({
-    fullName: formData.get("fullName"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword"),
-  });
+  try {
+    const parsed = signupSchema.safeParse({
+      fullName: formData.get("fullName"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    });
 
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-    options: {
-      data: { full_name: parsed.data.fullName },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
-    },
-  });
-
-  if (error) {
-    if (error.message.toLowerCase().includes("already registered")) {
-      return { success: false, error: "An account with this email already exists." };
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
     }
-    return { success: false, error: error.message };
-  }
 
-  if (!data.user) {
-    return { success: false, error: "Could not create account. Please try again." };
-  }
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.signUp({
+      email: parsed.data.email,
+      password: parsed.data.password,
+      options: {
+        data: { full_name: parsed.data.fullName },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
+      },
+    });
 
-  return { success: true };
+    if (error) {
+      const message = error.message || "Signup failed. Please try again.";
+      if (message.toLowerCase().includes("already registered") || message.toLowerCase().includes("already exists")) {
+        return { success: false, error: "An account with this email already exists." };
+      }
+      return { success: false, error: message };
+    }
+
+    if (!data.user) {
+      return { success: false, error: "Could not create account. Please try again." };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error("signupAction unexpected error:", err);
+    const message = err instanceof Error ? err.message : "Unexpected error. Please try again.";
+    return { success: false, error: message };
+  }
 }
 
 export async function logoutAction() {
