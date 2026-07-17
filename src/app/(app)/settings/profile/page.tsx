@@ -14,9 +14,10 @@ export default async function ProfilePage() {
   const { profile, branch } = await getProfileData(authUser.id);
   if (!profile) redirect("/dashboard");
 
-  const initials = profile.full_name
+  const fullName: string = profile.full_name;
+  const initials = fullName
     .split(" ")
-    .map((p) => p[0])
+    .map((p: string) => p[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
