@@ -32,9 +32,7 @@ export async function getMenuData(branchId: string) {
 export async function checkoutAction(input: CheckoutInput): Promise<ActionResult<{ saleId: string; orderNumber: string }>> {
   const parsed = checkoutSchema.safeParse(input);
   if (!parsed.success) {
-    const issue = parsed.error.issues[0];
-    const path = issue?.path.join(".") ?? "unknown";
-    return { success: false, error: `Invalid field "${path}": ${issue?.message ?? "unknown error"}` };
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid order data" };
   }
   const data = parsed.data;
   const supabase = await createClient();

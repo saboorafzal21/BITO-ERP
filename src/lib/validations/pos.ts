@@ -1,8 +1,10 @@
 import { z } from "zod";
 
+const idString = z.string().min(1, "Required");
+
 export const cartItemSchema = z.object({
-  product_id: z.string().uuid(),
-  variant_id: z.string().uuid().nullable().optional(),
+  product_id: idString,
+  variant_id: idString.nullable().optional(),
   name: z.string(),
   unit_price: z.coerce.number().nonnegative(),
   quantity: z.coerce.number().int().positive(),
@@ -15,10 +17,10 @@ export const cartItemSchema = z.object({
 });
 
 export const checkoutSchema = z.object({
-  branch_id: z.string().uuid(),
+  branch_id: idString,
   order_type: z.enum(["dine_in", "take_away", "delivery"]),
   table_number: z.string().optional(),
-  customer_id: z.string().uuid().nullable().optional(),
+  customer_id: idString.nullable().optional(),
   payment_method: z.enum(["cash", "card", "wallet", "bank_transfer", "split"]),
   amount_paid: z.coerce.number().nonnegative(),
   discount_amount: z.coerce.number().nonnegative().default(0),
