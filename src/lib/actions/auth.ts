@@ -82,18 +82,11 @@ export async function signupAction(formData: FormData): Promise<ActionResult> {
     });
 
     if (error) {
-      console.error("signUp error object:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
       const message = error.message || "Signup failed. Please try again.";
       if (message.toLowerCase().includes("already registered") || message.toLowerCase().includes("already exists")) {
         return { success: false, error: "An account with this email already exists." };
       }
-      const debugInfo = JSON.stringify({
-        message: error.message,
-        status: (error as { status?: number }).status,
-        code: (error as { code?: string }).code,
-        name: error.name,
-      });
-      return { success: false, error: `${message || "Signup failed"} | debug: ${debugInfo}` };
+      return { success: false, error: message };
     }
 
     if (!data.user) {
