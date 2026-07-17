@@ -82,11 +82,18 @@ export async function signupAction(formData: FormData): Promise<ActionResult> {
     });
 
     if (error) {
+      const debugInfo = JSON.stringify({
+        message: error.message,
+        status: (error as { status?: number }).status,
+        code: (error as { code?: string }).code,
+        name: error.name,
+        cause: (error as { cause?: unknown }).cause ? String((error as { cause?: unknown }).cause) : undefined,
+      });
       const message = error.message || "Signup failed. Please try again.";
       if (message.toLowerCase().includes("already registered") || message.toLowerCase().includes("already exists")) {
         return { success: false, error: "An account with this email already exists." };
       }
-      return { success: false, error: message };
+      return { success: false, error: `${message || "Signup failed"} | debug: ${debugInfo} | url: ${process.env.NEXT_PUBLIC_SUPABASE_URL} | site: ${process.env.NEXT_PUBLIC_SITE_URL}` };
     }
 
     if (!data.user) {
